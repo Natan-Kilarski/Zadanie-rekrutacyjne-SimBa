@@ -19,22 +19,22 @@ public :
     void onParachuteDeployed () ;
 
     /**
-    * @param error - Informuje czy wyst ¹pi³ b³¹d barometru
-    * @param value - Odczyt wysoko œci w stopach
+    * @param error - Informuje czy wyst ï¿½piï¿½ bï¿½ï¿½d barometru
+    * @param value - Odczyt wysoko ï¿½ci w stopach
     */
     void onBaroReading ( bool error , uint16_t value ) ;
 
     /**
-    * @brief Pobiera bie¿¹cy stan , sk³ada go w 32 - bitow ¹ ramk ê z sum¹ kontroln ¹
+    * @brief Pobiera bieï¿½ï¿½cy stan , skï¿½ada go w 32 - bitow ï¿½ ramk ï¿½ z sumï¿½ kontroln ï¿½
     i zapisuje do bufora .
     */
     void recordCurrentState () ;
 
     /**
-    * @brief Funkcja pobiera ostatni ¹ ramk ê z bufora ko³owego , dekoduje j¹ oraz
-    loguje zdekodowane warto œci w czytelny spos ób na konsol ê.
-    * @Return Ostatnia ramka zapisana do bufora , jeœli xor siê zgadza .
-    0 xFFFFFFFF jeœli suma kontrolna jest niepoprawna .
+    * @brief Funkcja pobiera ostatni ï¿½ ramk ï¿½ z bufora koï¿½owego , dekoduje jï¿½ oraz
+    loguje zdekodowane warto ï¿½ci w czytelny spos ï¿½b na konsol ï¿½.
+    * @Return Ostatnia ramka zapisana do bufora , jeï¿½li xor siï¿½ zgadza .
+    0 xFFFFFFFF jeï¿½li suma kontrolna jest niepoprawna .
     */
     uint32_t getLastDataframe () ;
 };
