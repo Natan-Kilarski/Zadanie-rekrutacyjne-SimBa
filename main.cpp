@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdint>
 #include "TelemetryBlackBox.h"
 #include "Memory.h"
 

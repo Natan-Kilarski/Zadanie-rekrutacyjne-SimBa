@@ -22,6 +22,10 @@ public :
     * @param error - Informuje czy wyst �pi� b��d barometru
     * @param value - Odczyt wysoko �ci w stopach
     */
+
+    bool error;
+    uint16_t value;
+
     void onBaroReading ( bool error , uint16_t value ) ;
 
     /**
