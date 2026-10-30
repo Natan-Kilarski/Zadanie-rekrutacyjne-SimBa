@@ -40,30 +40,24 @@ void TelemetryBlackBox::onParachuteDeployed(){
 void TelemetryBlackBox::onBaroReading(bool error, std::uint16_t value){
     baroError = error;
     altitude = value;
-    std::cout << baroError << "baroerror" << std::endl;
-    std::cout << altitude << "altitude" << std::endl;
 }
 
 void TelemetryBlackBox::recordCurrentState(){
 
-    uint8_t byte0, byte1, byte2, checksum;
+    uint8_t byte0= 0, byte1 = 0, byte2 = 0, checksum = 0;
+
 
     if (parachuteDeployed == true){
         byte0 = byte0 | (1 << 3);
-        std::cout << byte0 << "b0" << std::endl;
     }
 
     if (stateValue == 0 or stateValue == 4){
         altitude = 0;
-        std::cout << state << "state" << std::endl;
-        std::cout << altitude << "alt" << std::endl;
     }
 
     if (baroError == true){
         byte0 = byte0 | (1 << 4);
         altitude = 0b1111111111111111;
-        std::cout << byte0 << "byte0" << std::endl;
-        std::cout << altitude << "znowu alt" << std::endl;
     }
 
     else {
@@ -73,29 +67,23 @@ void TelemetryBlackBox::recordCurrentState(){
 
 
 
-    byte0 = (byte0 & 0b11111000) | state;
-    std::cout << std::bitset<3>(byte0) << " Rocket state" << std::endl;
+    byte0 = (byte0 & 0b11111000) | stateValue;
 
     byte1 = static_cast<std::uint8_t>(altitude & 0x00FF);
     byte2 = static_cast<std::uint8_t>((altitude & 0xFF00) >> 8);
 
-    std::cout << std::bitset<8>(byte1) << "bitset b1" << std::endl;
-    std::cout << std::bitset<8>(byte2) << "bitset b2" << std::endl;
-
     checksum = byte0 ^ byte1 ^ byte2;
-
-    std::cout << checksum << "checksum" << std::endl;
 
     frame = (static_cast<std::uint32_t>(checksum) << 24) + (static_cast<std::uint32_t>(byte2) << 16) 
     + (static_cast<std::uint32_t>(byte1) << 8) + static_cast<std::uint32_t>(byte0);
 
     memory.save(frame);
-
-    memory.show();
 }
 
 std::uint32_t TelemetryBlackBox::getLastDataframe(){
-    
+
+    uint8_t byte0Check = 0, byte1Check = 0, byte2Check = 0, byte3Check = 0, checksumCheck = 0;
+
     std::uint32_t lastFrame = memory.read();
 
     std::cout << "Stan rakiety - " << onString(static_cast<RocketState>(lastFrame & 0x00000007)) << std::endl;
@@ -121,12 +109,13 @@ std::uint32_t TelemetryBlackBox::getLastDataframe(){
     byte0Check = static_cast<std::uint8_t>(lastFrame & 0x000000FF);
     byte1Check = static_cast<std::uint8_t>((lastFrame & 0x0000FF00) >> 8);
     byte2Check = static_cast<std::uint8_t>((lastFrame & 0x00FF0000) >> 16);
+    byte3Check = static_cast<std::uint8_t>((lastFrame & 0xFF000000) >> 24);
 
     checksumCheck = byte0Check ^ byte1Check ^ byte2Check;
 
     
 
-    if (checksumCheck == checksum){
+    if (checksumCheck == byte3Check){
         std::cout << "Checksum correct" << std::endl;
         return lastFrame;
     }
