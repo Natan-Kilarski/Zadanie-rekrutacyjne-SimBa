@@ -5,6 +5,7 @@
 #include <iostream>
 # include <cstdint>
 #include <string>
+#include "Memory.h"
 
 enum RocketState : uint8_t {
     DISARM = 0 ,
@@ -17,10 +18,12 @@ enum RocketState : uint8_t {
 
 class TelemetryBlackBox {
 private:
-    std::uint8_t byte0, byte1, byte2, checksum;
+    std::uint8_t byte0, byte1, byte2, checksum, byte0Check, byte1Check, byte2Check, checksumCheck;
     std::uint16_t altitude;
     std::uint32_t frame;
     bool parachuteDeployed, baroError;
+
+    Memory memory;
 
 public :
     std::string onString(RocketState state);
