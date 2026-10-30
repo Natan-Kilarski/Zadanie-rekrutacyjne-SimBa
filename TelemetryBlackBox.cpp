@@ -4,11 +4,7 @@
 #include <bitset>
 #include "TelemetryBlackBox.h"
 
-std::uint8_t byte0 = 0, byte1 = 0, byte2 = 0, checksum = 0, byte0Check = 0, byte1Check = 0, byte2Check = 0, checksumCheck = 0;
-std::uint16_t altitude = 0;
-std::uint32_t frame = 0;
-bool parachuteDeployed = false, baroError = false;
-RocketState state = DISARM;
+
 
 std::string TelemetryBlackBox::onString (RocketState state){
     switch (state){
@@ -33,8 +29,8 @@ std::string TelemetryBlackBox::onString (RocketState state){
 }
 
 void TelemetryBlackBox::onRocketStateChange (RocketState state){
-    byte0 = (byte0 & 0b11111000) | state;
-    std::cout << byte0 << std::endl;
+    stateValue = state;
+
 }
 
 void TelemetryBlackBox::onParachuteDeployed(){
@@ -44,44 +40,51 @@ void TelemetryBlackBox::onParachuteDeployed(){
 void TelemetryBlackBox::onBaroReading(bool error, std::uint16_t value){
     baroError = error;
     altitude = value;
-    std::cout << baroError << std::endl;
-    std::cout << altitude << std::endl;
+    std::cout << baroError << "baroerror" << std::endl;
+    std::cout << altitude << "altitude" << std::endl;
 }
 
 void TelemetryBlackBox::recordCurrentState(){
+
+    uint8_t byte0, byte1, byte2, checksum;
+
     if (parachuteDeployed == true){
         byte0 = byte0 | (1 << 3);
-        std::cout << byte0 << std::endl;
+        std::cout << byte0 << "b0" << std::endl;
     }
 
-    if ((state == 0) || (state == 4)){
+    if (stateValue == 0 or stateValue == 4){
         altitude = 0;
-        std::cout << altitude << std::endl;
+        std::cout << state << "state" << std::endl;
+        std::cout << altitude << "alt" << std::endl;
     }
 
     if (baroError == true){
         byte0 = byte0 | (1 << 4);
         altitude = 0b1111111111111111;
-        std::cout << byte0 << std::endl;
-        std::cout << altitude << std::endl;
+        std::cout << byte0 << "byte0" << std::endl;
+        std::cout << altitude << "znowu alt" << std::endl;
     }
 
     else {
         byte0 = byte0 & ~(1 << 4);
-        std::cout << byte0 << std::endl;
+        std::cout << byte0 << "znowu b0" << std::endl;
     }
 
-    
 
-    byte1 = static_cast<std::uint8_t>(altitude & 0x0000FFFF);
-    byte2 = static_cast<std::uint8_t>((altitude & 0x00FFFF00) >> 8);
 
-    std::cout << byte1 << std::endl;
-    std::cout << byte2 << std::endl;
+    byte0 = (byte0 & 0b11111000) | state;
+    std::cout << std::bitset<3>(byte0) << " Rocket state" << std::endl;
+
+    byte1 = static_cast<std::uint8_t>(altitude & 0x00FF);
+    byte2 = static_cast<std::uint8_t>((altitude & 0xFF00) >> 8);
+
+    std::cout << std::bitset<8>(byte1) << "bitset b1" << std::endl;
+    std::cout << std::bitset<8>(byte2) << "bitset b2" << std::endl;
 
     checksum = byte0 ^ byte1 ^ byte2;
 
-    std::cout << checksum << std::endl;
+    std::cout << checksum << "checksum" << std::endl;
 
     frame = (static_cast<std::uint32_t>(checksum) << 24) + (static_cast<std::uint32_t>(byte2) << 16) 
     + (static_cast<std::uint32_t>(byte1) << 8) + static_cast<std::uint32_t>(byte0);
