@@ -1,19 +1,22 @@
 #include <iostream>
 #include <cstdint>
+#include <bitset>
 #include "Memory.h"
 
-std::uint32_t memory[16] = {};
-int memoryIndex = 0;
 
 void Memory::save (std::uint32_t memoryFrame){
-    memory[memoryIndex] = memoryFrame;
+    memoryArray[memoryIndex] = memoryFrame;
     memoryIndex = (memoryIndex + 1) % 16;
 }
 
 void Memory::show(){
     std::cout << "Memory:" << std::endl;
     for (int i = 0; i < 16; i++){
-        std::cout << memory[i] << std::endl;
+        std::cout << "0b" << std::bitset<32>(memoryArray[i]) << std::endl;
     }
+}
+
+std::uint32_t Memory::read(){
+    return memoryArray[(memoryIndex + 15) % 16];
 }
 
