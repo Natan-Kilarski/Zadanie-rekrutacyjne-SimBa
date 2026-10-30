@@ -18,11 +18,10 @@ enum RocketState : uint8_t {
 
 class TelemetryBlackBox {
 private:
-    std::uint8_t  byte0Check, byte1Check, byte2Check, checksumCheck;
-    std::uint16_t altitude;
-    std::uint32_t frame;
-    bool parachuteDeployed, baroError;
-    int stateValue;
+    std::uint16_t altitude = 0;
+    std::uint32_t frame = 0;
+    bool parachuteDeployed = false, baroError = false;
+    int stateValue = 0;
 
     Memory memory;
 

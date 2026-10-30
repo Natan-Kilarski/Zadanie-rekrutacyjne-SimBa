@@ -1,12 +1,10 @@
-#include <iostream>
-
 #pragma once
 
 class Memory{
     private:
 
     std::uint32_t memoryArray[16] = {};
-    int memoryIndex;
+    int memoryIndex = 0;
 
     public:
 
