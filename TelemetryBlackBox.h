@@ -2,7 +2,9 @@
 #define HEADER_C504464ADB3BB822
 
 # pragma once
-# include < cstdint >
+#include <iostream>
+# include <cstdint>
+#include <string>
 
 enum RocketState : uint8_t {
     DISARM = 0 ,
@@ -14,17 +16,23 @@ enum RocketState : uint8_t {
 
 
 class TelemetryBlackBox {
+private:
+    std::uint8_t byte0, byte1, byte2, checksum;
+    std::uint16_t altitude;
+    std::uint32_t frame;
+    bool parachuteDeployed, baroError;
+
 public :
+    std::string onString(RocketState state);
+
     void onRocketStateChange ( RocketState state ) ;
+
     void onParachuteDeployed () ;
 
     /**
     * @param error - Informuje czy wyst �pi� b��d barometru
     * @param value - Odczyt wysoko �ci w stopach
     */
-
-    bool error;
-    uint16_t value;
 
     void onBaroReading ( bool error , uint16_t value ) ;
 
