@@ -130,13 +130,19 @@ void testBufferReadOnWrongChecksumValue() {     //test sprawdzajacy odczyt ramki
 }
 
 int main() {
+    std::cout << "Test odczytu bufora bez zadnej zapisanej ramki:" << std::endl;
     testBufferReadBeforeRecorded();
+    std::cout << "Test odczytu klasycznej ramki z bufora (bez zadnych bledow):" << std::endl;
     testBufferReadClassic();
+    std::cout << "Test odczytu ramki z bledem barometru:" << std::endl;
     testBufferReadOnBaroError();
+    std::cout << "Test odczytu ramki po wyladowaniu rakiety:" << std::endl;
     testBufferReadOnLanded();
+    std::cout << "Test odczytu ramki po wypuszczeniu spadochronu:" << std::endl;
     testBufferReadOnParachuteDeployed();
-    testBufferReadOnLanded();
+    std::cout << "Test prawidlowego nadpisywania elementow w buforze kolowym:" << std::endl;
     CircularBufferTest();
+    std::cout << "Test odczytu ramki z nieprawidlowa suma kontrolna:" << std::endl;
     testBufferReadOnWrongChecksumValue();
 
     return 0;
