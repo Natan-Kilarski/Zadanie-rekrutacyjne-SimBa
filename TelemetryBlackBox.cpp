@@ -4,8 +4,6 @@
 #include <bitset>
 #include "TelemetryBlackBox.h"
 
-
-
 std::string TelemetryBlackBox::onString (RocketState state){
     switch (state){
         case RocketState::DISARM:
@@ -62,7 +60,6 @@ void TelemetryBlackBox::recordCurrentState(){
 
     else {
         byte0 = byte0 & ~(1 << 4);
-        std::cout << byte0 << "znowu b0" << std::endl;
     }
 
 
@@ -78,6 +75,10 @@ void TelemetryBlackBox::recordCurrentState(){
     + (static_cast<std::uint32_t>(byte1) << 8) + static_cast<std::uint32_t>(byte0);
 
     memory.save(frame);
+}
+
+void TelemetryBlackBox::memoryShow() {
+    memory.show();
 }
 
 std::uint32_t TelemetryBlackBox::getLastDataframe(){

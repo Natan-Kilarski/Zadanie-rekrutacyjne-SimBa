@@ -45,6 +45,7 @@ public :
     */
     void recordCurrentState () ;
 
+    void memoryShow();
     /**
     * @brief Funkcja pobiera ostatni � ramk � z bufora ko�owego , dekoduje j� oraz
     loguje zdekodowane warto �ci w czytelny spos �b na konsol �.
