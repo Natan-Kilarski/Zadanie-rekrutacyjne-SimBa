@@ -136,7 +136,7 @@ int main() {
     testBufferReadClassic();
     std::cout << "Test odczytu ramki z bledem barometru:" << std::endl;
     testBufferReadOnBaroError();
-    std::cout << "Test odczytu ramki po wyladowaniu:" << std::endl;
+    std::cout << "Test odczytu ramki po wyladowaniu rakiety:" << std::endl;
     testBufferReadOnLanded();
     std::cout << "Test odczytu ramki po wypuszczeniu spadochronu:" << std::endl;
     testBufferReadOnParachuteDeployed();
