@@ -7,7 +7,7 @@
 #include <string>
 #include "Memory.h"
 
-enum RocketState : uint8_t {
+enum RocketState : uint8_t {    //zmienna stanu rakiety
     DISARM = 0 ,
     ARM = 1 ,
     FLIGHT = 2 ,
@@ -16,43 +16,33 @@ enum RocketState : uint8_t {
 };
 
 
-class TelemetryBlackBox {
+class TelemetryBlackBox {   //klasa blackboxa
 private:
-    std::uint16_t altitude = 0;
-    std::uint32_t frame = 0;
-    bool parachuteDeployed = false, baroError = false;
-    int stateValue = 0;
+    std::uint16_t altitude = 0;     //zmienna wysokosci
+    std::uint32_t frame = 0;        //zmienna ramki zapisywanej w buforze
+    bool parachuteDeployed = false, baroError = false;      //zmienne logiczne odpowiadajace wypuszczeniu spadochronu i bledowi barometru
+    int stateValue = 0;     //zmienna zamieniajaca stan rakiety na integer
 
-    Memory memory;
+    Memory memory;      //element klasy memory - bufor kolowy
 
 public :
-    std::string onString(RocketState state);
+    std::string onString(RocketState state);        //funkcja rzutujaca stan rakiety na stringa, wywolywana podczas dekodowania ramki
 
-    void onRocketStateChange ( RocketState state ) ;
+    void onRocketStateChange ( RocketState state ) ;    //funkcja ustalajaca stan rakiety
 
-    void onParachuteDeployed () ;
+    void onParachuteDeployed () ;   //funkcja odpowiedzialna za wypuszczenie spadochronu
 
-    /**
-    * @param error - Informuje czy wyst �pi� b��d barometru
-    * @param value - Odczyt wysoko �ci w stopach
-    */
+    void onBaroReading ( bool error , uint16_t value ) ;        //funkcja odczytujaca wskazania barometru
 
-    void onBaroReading ( bool error , uint16_t value ) ;
+    void recordCurrentState () ;        //funkcja skladajaca ramke i wysylajaca ja do bufora
 
-    /**
-    * @brief Pobiera bie��cy stan , sk�ada go w 32 - bitow � ramk � z sum� kontroln �
-    i zapisuje do bufora .
-    */
-    void recordCurrentState () ;
+    void memoryShow();      //funkcja wypisujaca caly bufor
 
-    void memoryShow();
-    /**
-    * @brief Funkcja pobiera ostatni � ramk � z bufora ko�owego , dekoduje j� oraz
-    loguje zdekodowane warto �ci w czytelny spos �b na konsol �.
-    * @Return Ostatnia ramka zapisana do bufora , je�li xor si� zgadza .
-    0 xFFFFFFFF je�li suma kontrolna jest niepoprawna .
-    */
-    uint32_t getLastDataframe () ;
+    std::uint32_t getLastDataframe () ;     //funkcja dekodujaca ostatnia zapisana ramke i sprawdzajaca zgodnosc sumy kontrolnej
+
+    std::uint32_t getMemoryElement (int index);     //funkcja zwracajaca wybrany element bufora
+
+    void checksumChange (int index) ;   //funkcja zmieniajaca sume kontrolna wybranej ramki, sluzaca do przeprowadzenia testu (dziala tylko dla wybranych przypadkow)
 };
 
 #endif // header guard 

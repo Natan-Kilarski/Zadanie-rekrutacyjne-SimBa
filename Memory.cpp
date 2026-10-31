@@ -20,3 +20,24 @@ std::uint32_t Memory::read(){
     return memoryArray[(memoryIndex + 15) % 16];
 }
 
+bool Memory::bufferRecordCheck() {
+    for (int j = 0; j < 16; j++) {
+        if (memoryArray[j] != 0) {
+            return false;
+        }
+
+        else {
+            return true;
+        }
+    }
+}
+
+std::uint32_t Memory::getElement (int index){
+    return memoryArray[index];
+}
+
+void Memory::wrongChecksum (int index) {
+    if (index >= 0 && index < 16) {
+        memoryArray[index] |= (1 << 31);
+    }
+}
