@@ -85,47 +85,62 @@ std::uint32_t TelemetryBlackBox::getLastDataframe(){
 
     uint8_t byte0Check = 0, byte1Check = 0, byte2Check = 0, byte3Check = 0, checksumCheck = 0;
 
-    std::uint32_t lastFrame = memory.read();
+    bool noFrameRecorded = memory.bufferRecordCheck();
 
-    std::cout << "Stan rakiety - " << onString(static_cast<RocketState>(lastFrame & 0x00000007)) << std::endl;
+    if (noFrameRecorded == false) {
+        std::uint32_t lastFrame = memory.read();
 
-    if ((lastFrame & 0b0000000000000000000000000001000) != 0){
-        std::cout << "Parachute deployed" << std::endl;
+        std::cout << "Rocket state - " << onString(static_cast<RocketState>(lastFrame & 0x00000007)) << std::endl;
+
+        if ((lastFrame & 0b0000000000000000000000000001000) != 0){
+            std::cout << "Parachute deployed" << std::endl;
+        }
+
+        else {
+            std::cout << "Parachute not deployed" << std::endl;
+        }
+
+        if ((lastFrame & 0b00000000000000000000000000010000) == 0){
+            std::cout << "Correct barometer reading" << std::endl;
+        }
+
+        else {
+            std::cout << "Barometer error" << std::endl;
+        }
+
+        std::cout << "Altitude = " << std::dec << ((lastFrame & 0x00FFFF00) >> 8) << std::endl;
+
+        byte0Check = static_cast<std::uint8_t>(lastFrame & 0x000000FF);
+        byte1Check = static_cast<std::uint8_t>((lastFrame & 0x0000FF00) >> 8);
+        byte2Check = static_cast<std::uint8_t>((lastFrame & 0x00FF0000) >> 16);
+        byte3Check = static_cast<std::uint8_t>((lastFrame & 0xFF000000) >> 24);
+
+        checksumCheck = byte0Check ^ byte1Check ^ byte2Check;
+
+
+
+        if (checksumCheck == byte3Check){
+            std::cout << "Checksum correct" << std::endl;
+            return lastFrame;
+        }
+
+        else {
+            std::cout << "Checksum incorrect" << std::endl;
+            return 0xFFFFFFFF;
+        }
     }
 
     else {
-        std::cout << "Parachute not deployed" << std::endl;
+        std::cout << "No frame recorded" << std::endl;
+        return 0x0FFFFFF0;
     }
 
-    if ((lastFrame & 0b00000000000000000000000000010000) == 0){
-        std::cout << "Correct barometer reading" << std::endl;
-    }
+}
 
-    else {
-        std::cout << "Barometer error" << std::endl;
-    }
+std::uint32_t TelemetryBlackBox::getMemoryElement(int index) {
+    return memory.getElement(index);
+}
 
-    std::cout << "Altitude = " << ((lastFrame & 0x00FFFF00) >> 8) << std::endl;
-
-    byte0Check = static_cast<std::uint8_t>(lastFrame & 0x000000FF);
-    byte1Check = static_cast<std::uint8_t>((lastFrame & 0x0000FF00) >> 8);
-    byte2Check = static_cast<std::uint8_t>((lastFrame & 0x00FF0000) >> 16);
-    byte3Check = static_cast<std::uint8_t>((lastFrame & 0xFF000000) >> 24);
-
-    checksumCheck = byte0Check ^ byte1Check ^ byte2Check;
-
-    
-
-    if (checksumCheck == byte3Check){
-        std::cout << "Checksum correct" << std::endl;
-        return lastFrame;
-    }
-
-    else {
-        std::cout << "Checksum incorrect" << std::endl;
-        return 0xFFFFFFFF;
-    }
-
-
-
+void TelemetryBlackBox::checksumChange(int index) {
+    memory.wrongChecksum(index);
 }
